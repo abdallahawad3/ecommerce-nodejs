@@ -8,7 +8,6 @@ const errorMiddleware = (error: AppError, req: Request, res: Response, next: Nex
 
     const field = Object.keys(keyValue)[0] as string;
     const value = keyValue[field];
-
     error = new AppError(`${field} "${value}" already exists`, 400, "DUPLICATE_FIELD");
   }
 

@@ -5,6 +5,7 @@ import cors from "cors";
 
 import connectToDatabase from "./config/db.js";
 import categoryRoutes from "./routes/categoryRoute.js";
+import subCategoryRoutes from "./routes/subCategoryRoute.js";
 import errorMiddleware from "./middlewares/errorMiddleware.js";
 
 dotenv.config();
@@ -16,6 +17,7 @@ app.use(morgan("dev"));
 app.use(cors());
 
 app.use("/api/categories", categoryRoutes);
+app.use("/api/subCategories", subCategoryRoutes);
 app.use(errorMiddleware);
 
 connectToDatabase();
