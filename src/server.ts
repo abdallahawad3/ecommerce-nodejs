@@ -5,7 +5,7 @@ import cors from "cors";
 
 import connectToDatabase from "./config/db.js";
 import categoryRoutes from "./routes/categoryRoute.js";
-import errorMiddleware from "./middlewares/ErrorMiddleware.js";
+import errorMiddleware from "./middlewares/errorMiddleware.js";
 
 dotenv.config();
 const app = express();
