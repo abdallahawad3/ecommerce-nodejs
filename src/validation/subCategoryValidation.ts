@@ -3,6 +3,7 @@ import validation from "../middlewares/validation.js";
 
 export const CHECK_ID_VALIDATION = [
   param("id").isMongoId().withMessage("Invalid category ID format"),
+  validation,
 ];
 
 export const ADD_SUBCATEGORY_VALIDATION = [
