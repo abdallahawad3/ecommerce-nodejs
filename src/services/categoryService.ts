@@ -126,10 +126,8 @@ export const deleteCategory = asyncWrapper(async (req: Request, res: Response) =
   if (!category) {
     throw new NotFoundError(`Category not found for ID: ${id}`, "NOT_FOUND_ERROR");
   }
-  res.status(200).json({
+  res.status(204).json({
     status: "success",
-    data: {
-      category,
-    },
+    data: null,
   });
 });

@@ -18,16 +18,16 @@ app.use(cors());
 app.use("/api/categories", categoryRoutes);
 app.use(errorMiddleware);
 
-function startServer() {
-  connectToDatabase()
-    .then(() => {
-      app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-      });
-    })
-    .catch((error) => {
-      console.error("Failed to connect to the database:", error);
-    });
-}
+connectToDatabase();
+const server = app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
-startServer();
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (err) => {
+  console.error("Unhandled Rejection at:", err);
+  server.close(() => {
+    console.error("Server closed due to unhandled rejection");
+    process.exit(1);
+  });
+});
