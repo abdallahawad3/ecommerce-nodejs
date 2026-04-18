@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const connectToDatabase = () => {
   const dbUrl = process.env.DB_URL || "";
-  mongoose
+  return mongoose
     .connect(dbUrl)
     .then(() => {
       console.log("Connected to the database successfully.🙋🙋");
