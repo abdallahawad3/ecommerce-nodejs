@@ -1,16 +1,24 @@
 import { ADD_SUBCATEGORY_VALIDATION } from "./../validation/subCategoryValidation.js";
 import { Router } from "express";
 import {
+  createFilterObject,
   createSubCategory,
   deleteSubCategory,
   getAllSubCategories,
   getSubCategory,
+  setCategoryIdToBody,
   updateSubCategory,
 } from "../services/subCategoryService.js";
 import { CHECK_ID_VALIDATION } from "../validation/categoryValidation.js";
-const router = Router();
 
-router.route("/").post(ADD_SUBCATEGORY_VALIDATION, createSubCategory).get(getAllSubCategories);
+// mergeParams: true to access category id in subCategoryRoute Access params from parent route (categoryRoute)
+// ex: /categories/:id/subCategories ==> access category id in subCategoryRoute using req.params.id
+const router = Router({ mergeParams: true });
+
+router
+  .route("/")
+  .post(setCategoryIdToBody, ADD_SUBCATEGORY_VALIDATION, createSubCategory)
+  .get(createFilterObject, getAllSubCategories);
 router
   .route("/:id")
   .get(CHECK_ID_VALIDATION, getSubCategory)

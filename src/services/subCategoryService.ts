@@ -6,20 +6,48 @@ import { InternalServerError, NotFoundError } from "../errors/index.js";
 import categoryModel from "../models/categoryModel.js";
 
 /**
+ * @desc Set category id to body if category id is not in body but in params (from categoryRoute) then add it to body
+ * @route POST /api/v1/categories/:id/subCategories
+ * @access Private
+ */
+// This middleware is used to set category id to body if category id is not in body but in params (from categoryRoute) then add it to body
+export const setCategoryIdToBody = (req: Request, res: Response, next: NextFunction) => {
+  // if category id is not in body but in params (from categoryRoute) then add it to body
+  if (!req.body.category) req.body.category = req.params.id;
+  next();
+};
+
+/**
+ * @desc Create filter object to filter subCategories by category id if category id is in params
+ * @route GET /api/v1/subCategories or GET /api/v1/categories/:id/subCategories
+ * @access Public
+ */
+export const createFilterObject = (req: Request, res: Response, next: NextFunction) => {
+  let filterObject = {};
+  if (req.params.id) {
+    filterObject = { category: req.params.id };
+  }
+  req.filterObject = filterObject;
+  next();
+};
+/**
  * @desc Get all subCategories
  * @route GET /api/v1/subCategories
  * @access Public
  */
-
 export const getAllSubCategories = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 5;
     const skip = (page - 1) * limit;
-    const subCategories = await SubCategory.find({}, { __v: 0 })
+
+    const subCategories = await SubCategory.find(req.filterObject, { __v: 0 })
       .skip(skip)
-      .limit(limit)
-      .populate("category", "name");
+      .limit(limit);
+    // I don't need to populate category in subCategory because I will get category data
+    //  in category route and I will get subCategories data in subCategory route so I will not populate category in subCategory
+    //  because it will cause extra query to database and it will affect performance of the application
+    // .populate("category", "name");
     res.status(200).json({
       status: "success",
       results: subCategories.length,
@@ -36,9 +64,10 @@ export const getAllSubCategories = asyncWrapper(
  * @route POST /api/v1/subCategories
  * @access Private
  */
-
 export const createSubCategory = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.body.category) req.body.category = req.params.id; // if category id is not in body but in params (from categoryRoute) then add it to body
+
     const { name, category } = req.body;
 
     const existCategory = await categoryModel.findById(category);
@@ -68,7 +97,6 @@ export const createSubCategory = asyncWrapper(
  * @route GET /api/v1/subCategories/:id
  * @access Public
  */
-
 export const getSubCategory = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
@@ -131,7 +159,6 @@ export const updateSubCategory = asyncWrapper(
  * @route DELETE /api/v1/subCategories/:id
  * @access Private
  */
-
 export const deleteSubCategory = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
