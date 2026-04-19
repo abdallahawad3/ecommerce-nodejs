@@ -30,6 +30,7 @@ export const createFilterObject = (req: Request, res: Response, next: NextFuncti
   req.filterObject = filterObject;
   next();
 };
+
 /**
  * @desc Get all subCategories
  * @route GET /api/v1/subCategories
