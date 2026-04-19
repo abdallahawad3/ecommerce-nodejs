@@ -4,9 +4,10 @@ import morgan from "morgan";
 import cors from "cors";
 
 import connectToDatabase from "./config/db.js";
+import errorMiddleware from "./middlewares/errorMiddleware.js";
 import categoryRoutes from "./routes/Category.js";
 import subCategoryRoutes from "./routes/SubCategory.js";
-import errorMiddleware from "./middlewares/errorMiddleware.js";
+import brandRoutes from "./routes/Brands.js";
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,7 @@ app.use(cors());
 
 app.use("/api/categories", categoryRoutes);
 app.use("/api/subCategories", subCategoryRoutes);
+app.use("/api/brands", brandRoutes);
 app.use(errorMiddleware);
 
 connectToDatabase();
