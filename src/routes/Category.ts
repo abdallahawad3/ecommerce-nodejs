@@ -2,15 +2,15 @@ import { Router } from "express";
 import {
   ADD_UPDATE_CATEGORY_VALIDATION,
   CHECK_ID_VALIDATION,
-} from "./../validation/categoryValidation.js";
+} from "../validation/categoryValidation.js";
 import {
   createCategory,
   deleteCategory,
   getAllCategories,
   getSpecificCategory,
   updateCategory,
-} from "../services/categoryService.js";
-import subCategoryRoute from "./subCategoryRoute.js";
+} from "../services/Category.js";
+import subCategoryRoute from "./SubCategory.js";
 import validation from "../middlewares/validation.js";
 
 const router = Router();

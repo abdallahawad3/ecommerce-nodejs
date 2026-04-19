@@ -3,7 +3,7 @@ import slugify from "slugify";
 import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import SubCategory from "../models/subCategoryModel.js";
 import { InternalServerError, NotFoundError } from "../errors/index.js";
-import categoryModel from "../models/categoryModel.js";
+import categoryModel from "../models/Category.js";
 
 /**
  * @desc Set category id to body if category id is not in body but in params (from categoryRoute) then add it to body

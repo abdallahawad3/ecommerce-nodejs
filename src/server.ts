@@ -4,8 +4,8 @@ import morgan from "morgan";
 import cors from "cors";
 
 import connectToDatabase from "./config/db.js";
-import categoryRoutes from "./routes/categoryRoute.js";
-import subCategoryRoutes from "./routes/subCategoryRoute.js";
+import categoryRoutes from "./routes/Category.js";
+import subCategoryRoutes from "./routes/SubCategory.js";
 import errorMiddleware from "./middlewares/errorMiddleware.js";
 
 dotenv.config();

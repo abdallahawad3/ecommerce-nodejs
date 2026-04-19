@@ -1,7 +1,7 @@
 import type { Response, Request, NextFunction } from "express";
 import slugify from "slugify";
 
-import Category from "../models/categoryModel.js";
+import Category from "../models/Category.js";
 import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import { NotFoundError, ValidationError } from "../errors/index.js";
 

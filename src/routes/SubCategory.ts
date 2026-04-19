@@ -1,4 +1,4 @@
-import { ADD_SUBCATEGORY_VALIDATION } from "./../validation/subCategoryValidation.js";
+import { ADD_SUBCATEGORY_VALIDATION } from "../validation/subCategoryValidation.js";
 import { Router } from "express";
 import {
   createFilterObject,
@@ -8,7 +8,7 @@ import {
   getSubCategory,
   setCategoryIdToBody,
   updateSubCategory,
-} from "../services/subCategoryService.js";
+} from "../services/SubCategory.js";
 import { CHECK_ID_VALIDATION } from "../validation/categoryValidation.js";
 
 // mergeParams: true to access category id in subCategoryRoute Access params from parent route (categoryRoute)
