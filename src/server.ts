@@ -8,6 +8,7 @@ import errorMiddleware from "./middlewares/errorMiddleware.js";
 import categoryRoutes from "./routes/Category.js";
 import subCategoryRoutes from "./routes/SubCategory.js";
 import brandRoutes from "./routes/Brands.js";
+import productRoutes from "./routes/Products.js";
 
 dotenv.config();
 const app = express();
@@ -20,6 +21,7 @@ app.use(cors());
 app.use("/api/categories", categoryRoutes);
 app.use("/api/subCategories", subCategoryRoutes);
 app.use("/api/brands", brandRoutes);
+app.use("/api/products", productRoutes);
 app.use(errorMiddleware);
 
 connectToDatabase();
