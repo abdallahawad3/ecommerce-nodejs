@@ -4,6 +4,7 @@ import slugify from "slugify";
 import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import Product from "../models/Products.js";
 import { BadRequestError, NotFoundError } from "../errors/index.js";
+import transformQuery from "../utils/transformQuery.js";
 
 /**
  * @desc Get all products
@@ -12,16 +13,27 @@ import { BadRequestError, NotFoundError } from "../errors/index.js";
  */
 export const getAllProducts = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
+    // 1) Pagination
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 5;
     const skip = (page - 1) * limit;
 
-    const products = await Product.find({}, { __v: 0 })
+    // 2) Filtering
+    const queryObj = { ...req.query };
+    const excludedFields = ["page", "limit", "sort", "fields"];
+    excludedFields.forEach((field) => delete queryObj[field]);
+
+    const parsedQuery = transformQuery(queryObj);
+
+    const mongooseQuery = Product.find(parsedQuery, { __v: 0 })
       .skip(skip)
       .limit(limit)
       .populate("category", "name");
 
-    // TODO: Handel and update pagination data
+    // 4) Executing the query
+    const products = await mongooseQuery;
+
+    // TODO: Handle and update pagination data
     res.status(200).json({
       status: "success",
       data: {
