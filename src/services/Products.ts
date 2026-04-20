@@ -16,7 +16,10 @@ export const getAllProducts = asyncWrapper(
     const limit = parseInt(req.query.limit as string) || 5;
     const skip = (page - 1) * limit;
 
-    const products = await Product.find({}, { __v: 0 }).skip(skip).limit(limit);
+    const products = await Product.find({}, { __v: 0 })
+      .skip(skip)
+      .limit(limit)
+      .populate("category", "name");
 
     // TODO: Handel and update pagination data
     res.status(200).json({
@@ -90,7 +93,7 @@ export const updateProduct = asyncWrapper(
       throw new BadRequestError("The product ID is required", "BAD_REQUEST_ERROR");
     }
 
-    req.body.slug = slugify(req.body.title, { lower: true });
+    if (req.body.title) req.body.slug = slugify(req.body.title, { lower: true });
 
     const product = await Product.findByIdAndUpdate(productId, req.body, {
       new: true,

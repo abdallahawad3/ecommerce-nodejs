@@ -5,14 +5,14 @@ const schema = new Schema({
     type: String,
     required: [true, "Title is required"],
     trim: true,
-    maxlength: [32, "Title must be less than 32 characters"],
+    maxlength: [100, "Title must be less than 100 characters"],
   },
   description: {
     type: String,
     required: [true, "Description is required"],
     trim: true,
     minlength: [20, "Description must be at least 20 characters"],
-    maxlength: [150, "Description must be less than 150 characters"],
+    maxlength: [1000, "Description must be less than 1000 characters"],
   },
   quantity: {
     type: Number,
