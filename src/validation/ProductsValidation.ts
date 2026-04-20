@@ -1,6 +1,9 @@
 import { body, check, param } from "express-validator";
 import slugify from "slugify";
 import validation from "../middlewares/validation.js";
+import categoryModel from "../models/Category.js";
+import SubCategory from "../models/SubCategory.js";
+import { NotFoundError } from "../errors/index.js";
 
 export const createProductValidation = [
   check("title")
@@ -48,9 +51,31 @@ export const createProductValidation = [
     .notEmpty()
     .withMessage("Product must be belong to category")
     .isMongoId()
-    .withMessage("Invalid category id"),
+    .withMessage("Invalid category id")
+    .custom(async (val, { req }) => {
+      const category = await categoryModel.findById(val);
+      if (!category) {
+        throw new NotFoundError(`Category not found for this id: ${val}`, "NOT_FOUND_ERROR");
+      }
+      return true;
+    }),
 
-  check("subCategory").optional().isMongoId().withMessage("Invalid subCategory id"),
+  check("subcategory").optional().isArray().withMessage("Subcategory must be an array"),
+  check("subcategory.*")
+    .optional()
+    .isMongoId()
+    .withMessage("Each subcategory must be a valid MongoDB ObjectId")
+    .custom(async (val: string, { req }) => {
+      const categoryId = req.body.category;
+      const subCategory = await SubCategory.findOne({ _id: val, category: categoryId });
+      if (!subCategory) {
+        throw new NotFoundError(
+          `Sub category ${val} not found for category ${categoryId}`,
+          "NOT_FOUND_ERROR",
+        );
+      }
+      return true;
+    }),
   check("brand").optional().isMongoId().withMessage("Invalid brand id"),
 
   check("ratingsAverage")

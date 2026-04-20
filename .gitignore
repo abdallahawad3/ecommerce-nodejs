@@ -16,3 +16,4 @@ coverage
 *.zip
 *.tar.gz  
 *.tgz
+**/utils/dummyData/*

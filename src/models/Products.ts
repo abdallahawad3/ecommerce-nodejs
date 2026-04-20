@@ -26,7 +26,7 @@ const schema = new Schema({
   slug: {
     type: String,
     required: true,
-    unique: true,
+    unique: [true, "Slug must be unique"],
     lowercase: true,
   },
   price: {
