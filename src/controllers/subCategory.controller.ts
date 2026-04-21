@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
 import slugify from "slugify";
 import { asyncWrapper } from "../utils/AsyncWrapper.js";
-import SubCategory from "../models/SubCategory.js";
+import SubCategory from "../models/subCategory.model.js";
 import { InternalServerError, NotFoundError } from "../errors/index.js";
-import categoryModel from "../models/Category.js";
+import categoryModel from "../models/category.model.js";
 
 /**
  * @desc Set category id to body if category id is not in body but in params (from categoryRoute) then add it to body

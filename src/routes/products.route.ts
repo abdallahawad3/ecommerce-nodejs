@@ -5,7 +5,7 @@ import {
   getAllProducts,
   getProductById,
   updateProduct,
-} from "../services/Products.js";
+} from "../controllers/products.controller.js";
 import { CHECK_PRODUCT_ID, createProductValidation } from "../validation/ProductsValidation.js";
 
 const router = Router();

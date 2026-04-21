@@ -5,10 +5,10 @@ import cors from "cors";
 
 import connectToDatabase from "./config/db.js";
 import errorMiddleware from "./middlewares/errorMiddleware.js";
-import categoryRoutes from "./routes/Category.js";
-import subCategoryRoutes from "./routes/SubCategory.js";
-import brandRoutes from "./routes/Brands.js";
-import productRoutes from "./routes/Products.js";
+import categoryRoutes from "./routes/category.route.js";
+import subCategoryRoutes from "./routes/subCategory.route.js";
+import brandRoutes from "./routes/brands.route.js";
+import productRoutes from "./routes/products.route.js";
 
 dotenv.config();
 const app = express();

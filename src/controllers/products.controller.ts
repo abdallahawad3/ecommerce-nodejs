@@ -2,10 +2,8 @@ import type { Request, Response, NextFunction } from "express";
 import slugify from "slugify";
 
 import { asyncWrapper } from "../utils/AsyncWrapper.js";
-import Product from "../models/Products.js";
+import Product from "../models/product.model.js";
 import { BadRequestError, NotFoundError } from "../errors/index.js";
-import transformQuery from "../utils/transformQuery.js";
-import type { SortOrder } from "mongoose";
 import ApiFeatures from "../utils/apiFeatures.js";
 
 /**

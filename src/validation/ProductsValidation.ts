@@ -1,8 +1,8 @@
 import { body, check, param } from "express-validator";
 import slugify from "slugify";
 import validation from "../middlewares/validation.js";
-import categoryModel from "../models/Category.js";
-import SubCategory from "../models/SubCategory.js";
+import categoryModel from "../models/category.model.js";
+import SubCategory from "../models/subCategory.model.js";
 import { NotFoundError } from "../errors/index.js";
 
 export const createProductValidation = [

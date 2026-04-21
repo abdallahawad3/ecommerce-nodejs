@@ -5,7 +5,7 @@ import {
   getAllBrands,
   getBrandByID,
   updateBrand,
-} from "../services/Brands.js";
+} from "../controllers/brands.controller.js";
 import { CHECK_ID_PARAMS, CHECK_NAME_BODY } from "../validation/Brands.js";
 
 const router = Router();

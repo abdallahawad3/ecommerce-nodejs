@@ -9,8 +9,8 @@ import {
   getAllCategories,
   getSpecificCategory,
   updateCategory,
-} from "../services/Category.js";
-import subCategoryRoute from "./SubCategory.js";
+} from "../controllers/category.controller.js";
+import subCategoryRoute from "./subCategory.route.js";
 import validation from "../middlewares/validation.js";
 
 const router = Router();

@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import slugify from "slugify";
 
 import { asyncWrapper } from "../utils/AsyncWrapper.js";
-import Brand from "../models/Brands.js";
+import Brand from "../models/brand.model.js";
 import { InternalServerError, NotFoundError } from "../errors/index.js";
 
 /**
