@@ -5,10 +5,20 @@ import transformQuery from "./transformQuery.js";
 class ApiFeatures<T> {
   public mongooseQuery: Query<T[], T>;
   public query: ParsedQs;
-
+  public paginationResult: {
+    currentPage: number;
+    limit: number;
+    totalPages?: number;
+    next?: number;
+    prev?: number;
+  };
   constructor(mongooseQuery: Query<T[], T>, query: ParsedQs) {
     this.mongooseQuery = mongooseQuery;
     this.query = query;
+    this.paginationResult = {
+      currentPage: 1,
+      limit: 5,
+    };
   }
 
   filter() {
@@ -59,12 +69,31 @@ class ApiFeatures<T> {
     return this;
   }
 
-  paginate(){
+  paginate(countPages:number){
     const page = parseInt(this.query.page as string) || 1;
     const limit = parseInt(this.query.limit as string) || 5;
     const skip = (page - 1) * limit;
-    this.mongooseQuery = this.mongooseQuery.skip(skip).limit(limit);
+    const endIdx = page * limit;
+
+    const pagination: any = {}
+
+    pagination["currentPage"] = page;
+    pagination["limit"] = limit;
+    pagination["totalPages"] = Math.ceil(+countPages / limit);
+
+    // next page
+    console.log("countPages =>",countPages)
+    if (endIdx < countPages) {
+      pagination["next"] = page + 1;
+    }
     
+    // previous page
+    if (skip > 0) {
+      pagination["prev"] = page - 1;
+    }
+
+    this.paginationResult = pagination;
+    this.mongooseQuery = this.mongooseQuery.skip(skip).limit(limit);
     return this;
   }
 }
