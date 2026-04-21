@@ -21,7 +21,7 @@ export const getAllProducts = asyncWrapper(
 
     // 2) Filtering
     const queryObj = { ...req.query };
-    const excludedFields = ["page", "limit", "sort", "fields"];
+    const excludedFields = ["page", "limit", "sort", "fields", "keyword"];
     excludedFields.forEach((field) => delete queryObj[field]);
 
     const parsedQuery = transformQuery(queryObj);
@@ -42,11 +42,21 @@ export const getAllProducts = asyncWrapper(
     // 4) Field Limiting
     if (req.query.fields as string) {
       const fields = (req.query.fields as string).split(",").join(" ");
-      console.log(fields);
-
       mongooseQuery = mongooseQuery.select(fields);
     } else {
       mongooseQuery = mongooseQuery.select("-__v");
+    }
+
+    // 6) search query
+
+    if (req.query.keyword) {
+      let query: any = {};
+      query.$or = [
+        { title: { $regex: req.query.keyword, $options: "i" } },
+        { description: { $regex: req.query.keyword, $options: "i" } },
+      ];
+
+      mongooseQuery = mongooseQuery.find(query);
     }
 
     // 5) Executing the query
