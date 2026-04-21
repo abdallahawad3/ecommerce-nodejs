@@ -21,3 +21,26 @@ export const deleteOne = (Model: any) => asyncWrapper(
     });
   },
 );
+
+export const updateOne = (Model: any) => asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    if (!id) {
+      throw new BadRequestError("The document ID is required", "BAD_REQUEST_ERROR");
+    }
+
+    const document = await Model.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+      select: "-__v",
+    });
+    if (!document) {
+      throw new NotFoundError(`Document for the given ID:${id} not found`, "NOT_FOUND_ERROR");
+    }
+    res.status(200).json({
+      status: "success",
+      data: document,
+    });
+  },
+);
+  

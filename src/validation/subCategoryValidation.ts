@@ -1,6 +1,6 @@
 import { body, param } from "express-validator";
 import validation from "../middlewares/validation.js";
-
+import slugify from "slugify";
 export const CHECK_ID_VALIDATION = [
   param("id").isMongoId().withMessage("Invalid category ID format"),
   validation,
@@ -35,5 +35,11 @@ export const UPDATE_SUBCATEGORY_VALIDATION = [
     .withMessage("Category ID cannot be empty")
     .isMongoId()
     .withMessage("Invalid category ID format"),
+    body("name").custom((value, { req }) => {
+      if (value) {
+        req.body.slug = slugify(value, { lower: true });
+      }
+      return true;
+    }),
   validation,
 ];

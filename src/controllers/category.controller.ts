@@ -5,7 +5,7 @@ import Category from "../models/category.model.js";
 import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import { NotFoundError, ValidationError } from "../errors/index.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne } from "./handlersFactory.js";
+import { deleteOne, updateOne } from "./handlersFactory.js";
 
 /** @desc    Get all categories
  *@route   GET /api/categories
@@ -83,36 +83,13 @@ export const createCategory = asyncWrapper(async (req: Request, res: Response) =
     },
   });
 });
+
 /** @desc    Update an existing category
  * @route   PUT /api/categories/:id
  * @access  Private
  * @returns {Object} 200 - The updated category object
  */
-export const updateCategory = asyncWrapper(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { name } = req.body;
-
-  if (!name) {
-    throw new ValidationError("Category name is required", "VALIDATION_ERROR");
-  }
-
-  const category = await Category.findByIdAndUpdate(
-    id,
-    { name, slug: slugify(name, { lower: true }) },
-    { new: true, runValidators: true, __v: 0 },
-  );
-
-  if (!category) {
-    throw new NotFoundError(`Category not found for ID: ${id}`, "NOT_FOUND_ERROR");
-  }
-
-  res.status(200).json({
-    status: "success",
-    data: {
-      category,
-    },
-  });
-});
+export const updateCategory = updateOne(Category);
 
 /**
  * @desc    Delete a category by ID

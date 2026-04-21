@@ -24,6 +24,6 @@ router
 router
   .route("/:id")
   .get(CHECK_ID_VALIDATION, validation, getSpecificCategory)
-  .put(ADD_UPDATE_CATEGORY_VALIDATION, CHECK_ID_VALIDATION, validation, updateCategory)
+  .put(CHECK_ID_VALIDATION, ADD_UPDATE_CATEGORY_VALIDATION, updateCategory)
   .delete(CHECK_ID_VALIDATION, validation, deleteCategory);
 export default router;

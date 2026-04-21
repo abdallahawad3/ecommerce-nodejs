@@ -5,7 +5,7 @@ import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import Product from "../models/product.model.js";
 import { BadRequestError, NotFoundError } from "../errors/index.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne } from "./handlersFactory.js";
+import { deleteOne, updateOne } from "./handlersFactory.js";
 
 /**
  * @desc Get all products
@@ -83,34 +83,7 @@ export const createProduct = asyncWrapper(
  * @route PUT /api/products/:id
  * @access Private
  */
-export const updateProduct = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { productId } = req.params;
-    if (!productId) {
-      throw new BadRequestError("The product ID is required", "BAD_REQUEST_ERROR");
-    }
-
-    if (req.body.title) req.body.slug = slugify(req.body.title, { lower: true });
-
-    const product = await Product.findByIdAndUpdate(productId, req.body, {
-      new: true,
-      runValidators: true,
-      select: "-__v",
-    });
-
-    if (!product) {
-      throw new NotFoundError(`Product for the given ID:${productId} not found`, "NOT_FOUND_ERROR");
-    }
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        product,
-      },
-    });
-  },
-);
-
+export const updateProduct = updateOne(Product);
 /**
  * @desc Delete a product by ID
  * @route DELETE /api/products/:id

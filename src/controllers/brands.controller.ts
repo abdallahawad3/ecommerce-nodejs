@@ -5,7 +5,7 @@ import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import Brand from "../models/brand.model.js";
 import { InternalServerError, NotFoundError } from "../errors/index.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne } from "./handlersFactory.js";
+import { deleteOne, updateOne } from "./handlersFactory.js";
 
 /**
  * @desc Get all brands
@@ -81,25 +81,7 @@ export const getBrandByID = asyncWrapper(
  * @route PUT /api/v1/brands/:id
  * @access Public
  */
-export const updateBrand = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params;
-  const { name } = req.body;
-
-  const brand = await Brand.findByIdAndUpdate(
-    id,
-    { name, slug: slugify(name, { lower: true }) },
-    { new: true, runValidators: true, select: "-__v" },
-  );
-  if (!brand) {
-    throw new NotFoundError("Brand not found", "NOT_FOUND_ERROR");
-  }
-  res.status(200).json({
-    status: "success",
-    data: {
-      brand,
-    },
-  });
-});
+export const updateBrand = updateOne(Brand);
 
 /**
  * @desc Delete brand by id
