@@ -6,6 +6,7 @@ import Product from "../models/Products.js";
 import { BadRequestError, NotFoundError } from "../errors/index.js";
 import transformQuery from "../utils/transformQuery.js";
 import type { SortOrder } from "mongoose";
+import ApiFeatures from "../utils/apiFeatures.js";
 
 /**
  * @desc Get all products
@@ -14,65 +15,19 @@ import type { SortOrder } from "mongoose";
  */
 export const getAllProducts = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    // 1) Pagination
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 5;
-    const skip = (page - 1) * limit;
+    
+    // 1) Build the query
+    const apiFeatures = new ApiFeatures(Product.find(),req.query).paginate().sort().limitFields().search().filter();
 
-    // 2) Filtering
-    const queryObj = { ...req.query };
-    const excludedFields = ["page", "limit", "sort", "fields", "keyword"];
-    excludedFields.forEach((field) => delete queryObj[field]);
-
-    const parsedQuery = transformQuery(queryObj);
-
-    let mongooseQuery = Product.find(parsedQuery)
-      .skip(skip)
-      .limit(limit)
-      .populate("category", "name");
-
-    // 3) Sorting
-    if (req.query.sort as string) {
-      const sortFields = (req.query.sort as string).split(",").join(" ");
-      // Sort take the format of "field" for ascending and "-field" for descending and multiple fields can be sorted by separating them with a space
-      mongooseQuery = mongooseQuery.sort(sortFields);
-    } else {
-      mongooseQuery = mongooseQuery.sort("-createdAt");
-    }
-    // 4) Field Limiting
-    if (req.query.fields as string) {
-      const fields = (req.query.fields as string).split(",").join(" ");
-      mongooseQuery = mongooseQuery.select(fields);
-    } else {
-      mongooseQuery = mongooseQuery.select("-__v");
-    }
-
-    // 6) search query
-
-    if (req.query.keyword) {
-      let query: any = {};
-      query.$or = [
-        { title: { $regex: req.query.keyword, $options: "i" } },
-        { description: { $regex: req.query.keyword, $options: "i" } },
-      ];
-
-      mongooseQuery = mongooseQuery.find(query);
-    }
-
-    // 5) Executing the query
-    const products = await mongooseQuery;
-
-    // TODO: Handle and update pagination data
+    // 2) Execute the query
+    const products = await apiFeatures.mongooseQuery;
     res.status(200).json({
       status: "success",
       data: {
         products,
       },
-      page,
-      limit,
-      result: products.length,
     });
-  },
+  }
 );
 
 /**
