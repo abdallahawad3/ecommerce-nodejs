@@ -5,6 +5,7 @@ import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import Product from "../models/product.model.js";
 import { BadRequestError, NotFoundError } from "../errors/index.js";
 import ApiFeatures from "../utils/apiFeatures.js";
+import { deleteOne } from "./handlersFactory.js";
 
 /**
  * @desc Get all products
@@ -115,24 +116,4 @@ export const updateProduct = asyncWrapper(
  * @route DELETE /api/products/:id
  * @access Private
  */
-export const deleteProduct = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { productId } = req.params;
-    if (!productId) {
-      throw new BadRequestError("The product ID is required", "BAD_REQUEST_ERROR");
-    }
-
-    const product = await Product.findByIdAndDelete(productId);
-
-    if (!product) {
-      throw new NotFoundError(`Product for the given ID:${productId} not found`, "NOT_FOUND_ERROR");
-    }
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        product,
-      },
-    });
-  },
-);
+export const deleteProduct = deleteOne(Product);

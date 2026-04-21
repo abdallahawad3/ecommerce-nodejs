@@ -5,6 +5,7 @@ import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import Brand from "../models/brand.model.js";
 import { InternalServerError, NotFoundError } from "../errors/index.js";
 import ApiFeatures from "../utils/apiFeatures.js";
+import { deleteOne } from "./handlersFactory.js";
 
 /**
  * @desc Get all brands
@@ -105,16 +106,4 @@ export const updateBrand = asyncWrapper(async (req: Request, res: Response, next
  * @route DELETE /api/v1/brands/:id
  * @access Public
  */
-export const deleteBrand = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params;
-
-  const brand = await Brand.findByIdAndDelete(id);
-  if (!brand) {
-    throw new NotFoundError("Brand not found", "NOT_FOUND_ERROR");
-  }
-
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
+export const deleteBrand = deleteOne(Brand);

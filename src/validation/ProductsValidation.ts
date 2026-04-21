@@ -89,6 +89,6 @@ export const createProductValidation = [
 ];
 
 export const CHECK_PRODUCT_ID = [
-  param("productId").isMongoId().withMessage("Invalid product id"),
+  param("id").isMongoId().withMessage("Invalid product id"),
   validation,
 ];

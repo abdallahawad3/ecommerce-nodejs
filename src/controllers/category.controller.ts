@@ -5,6 +5,7 @@ import Category from "../models/category.model.js";
 import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import { NotFoundError, ValidationError } from "../errors/index.js";
 import ApiFeatures from "../utils/apiFeatures.js";
+import { deleteOne } from "./handlersFactory.js";
 
 /** @desc    Get all categories
  *@route   GET /api/categories
@@ -122,15 +123,4 @@ export const updateCategory = asyncWrapper(async (req: Request, res: Response) =
  * @returns {Object} 400 - Invalid ID format
  * @returns {Object} 500 - Internal Server Error
  */
-export const deleteCategory = asyncWrapper(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const category = await Category.findByIdAndDelete(id);
-
-  if (!category) {
-    throw new NotFoundError(`Category not found for ID: ${id}`, "NOT_FOUND_ERROR");
-  }
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
+export const deleteCategory = deleteOne(Category);

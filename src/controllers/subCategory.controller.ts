@@ -5,6 +5,7 @@ import SubCategory from "../models/subCategory.model.js";
 import { InternalServerError, NotFoundError } from "../errors/index.js";
 import categoryModel from "../models/category.model.js";
 import ApiFeatures from "../utils/apiFeatures.js";
+import { deleteOne } from "./handlersFactory.js";
 
 /**
  * @desc Set category id to body if category id is not in body but in params (from categoryRoute) then add it to body
@@ -155,23 +156,4 @@ export const updateSubCategory = asyncWrapper(
  * @route DELETE /api/v1/subCategories/:id
  * @access Private
  */
-export const deleteSubCategory = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-
-    const existSubCategory = await SubCategory.findById(id);
-    if (!existSubCategory) {
-      throw new NotFoundError("SubCategory not found", "NOT_FOUND_ERROR");
-    }
-
-    const subCategory = await SubCategory.findByIdAndDelete(id);
-    if (!subCategory) {
-      throw new InternalServerError("Failed to delete subCategory", "INTERNAL_SERVER_ERROR");
-    }
-
-    res.status(204).json({
-      status: "success",
-      data: null,
-    });
-  },
-);
+export const deleteSubCategory = deleteOne(SubCategory);
