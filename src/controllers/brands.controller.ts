@@ -4,6 +4,7 @@ import slugify from "slugify";
 import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import Brand from "../models/brand.model.js";
 import { InternalServerError, NotFoundError } from "../errors/index.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 
 /**
  * @desc Get all brands
@@ -12,20 +13,20 @@ import { InternalServerError, NotFoundError } from "../errors/index.js";
  */
 export const getAllBrands = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 5;
-    const skip = (page - 1) * limit;
-
-    const brands = await Brand.find({}, { __v: 0 }).skip(skip).limit(limit);
-
-    res.status(200).json({
-      status: "success",
-      results: brands.length,
-      page,
-      data: {
-        brands,
-      },
-    });
+ 
+      // 1) Build the query
+        const documentCount = await Brand.countDocuments();
+        const apiFeatures = new ApiFeatures(Brand.find(),req.query).paginate(documentCount).sort().limitFields().search("brand").filter();
+    
+        // 2) Execute the query
+        const brands = await apiFeatures.mongooseQuery;
+        res.status(200).json({
+          status: "success",
+          data: {
+            brands,
+          },
+          pagination: apiFeatures.paginationResult,
+        });
   },
 );
 

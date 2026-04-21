@@ -16,7 +16,7 @@ export const getAllProducts = asyncWrapper(
     
     // 1) Build the query
     const documentCount = await Product.countDocuments();
-    const apiFeatures = new ApiFeatures(Product.find(),req.query).paginate(documentCount).sort().limitFields().search().filter();
+    const apiFeatures = new ApiFeatures(Product.find(),req.query).paginate(documentCount).sort().limitFields().search("product").filter();
 
     // 2) Execute the query
     const products = await apiFeatures.mongooseQuery;

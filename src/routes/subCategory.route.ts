@@ -8,7 +8,7 @@ import {
   getSubCategory,
   setCategoryIdToBody,
   updateSubCategory,
-} from "../services/SubCategory.js";
+} from "../controllers/subCategory.controller.js";
 import { CHECK_ID_VALIDATION } from "../validation/categoryValidation.js";
 
 // mergeParams: true to access category id in subCategoryRoute Access params from parent route (categoryRoute)

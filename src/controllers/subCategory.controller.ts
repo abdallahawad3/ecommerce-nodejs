@@ -4,6 +4,7 @@ import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import SubCategory from "../models/subCategory.model.js";
 import { InternalServerError, NotFoundError } from "../errors/index.js";
 import categoryModel from "../models/category.model.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 
 /**
  * @desc Set category id to body if category id is not in body but in params (from categoryRoute) then add it to body
@@ -38,24 +39,18 @@ export const createFilterObject = (req: Request, res: Response, next: NextFuncti
  */
 export const getAllSubCategories = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 5;
-    const skip = (page - 1) * limit;
+   // 1) Build the query
+    const documentCount = await SubCategory.countDocuments();
+    const apiFeatures = new ApiFeatures(SubCategory.find(),req.query).paginate(documentCount).sort().limitFields().search("subCategory").filter();
 
-    const subCategories = await SubCategory.find(req.filterObject, { __v: 0 })
-      .skip(skip)
-      .limit(limit);
-    // I don't need to populate category in subCategory because I will get category data
-    //  in category route and I will get subCategories data in subCategory route so I will not populate category in subCategory
-    //  because it will cause extra query to database and it will affect performance of the application
-    // .populate("category", "name");
+    // 2) Execute the query
+    const subCategories = await apiFeatures.mongooseQuery;
     res.status(200).json({
       status: "success",
-      results: subCategories.length,
-      page,
       data: {
         subCategories,
       },
+      pagination: apiFeatures.paginationResult,
     });
   },
 );

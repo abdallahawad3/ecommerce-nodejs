@@ -54,14 +54,19 @@ class ApiFeatures<T> {
     return this;
   }
 
-  search(){
-    
+  search(modelName:"product" | "brand" | "category" | string){    
     if (this.query.keyword) {
       let query: any = {};
-      query.$or = [
-        { title: { $regex: this.query.keyword, $options: "i" } },
-        { description: { $regex: this.query.keyword, $options: "i" } },
-      ];
+      if(modelName === "product"){
+        query.$or = [
+          { title: { $regex: this.query.keyword, $options: "i" } },
+          { description: { $regex: this.query.keyword, $options: "i" } },
+        ];
+      } else {
+        query.$or = [
+          { name: { $regex: this.query.keyword, $options: "i" } },
+        ];
+      }
 
       this.mongooseQuery = this.mongooseQuery.find(query);
     }

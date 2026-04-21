@@ -4,6 +4,7 @@ import slugify from "slugify";
 import Category from "../models/category.model.js";
 import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import { NotFoundError, ValidationError } from "../errors/index.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 
 /** @desc    Get all categories
  *@route   GET /api/categories
@@ -13,17 +14,19 @@ import { NotFoundError, ValidationError } from "../errors/index.js";
  */
 
 export const getAllCategories = asyncWrapper(async (req: Request, res: Response) => {
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 10;
-  const skip = (page - 1) * limit;
+   // 1) Build the query
+    const documentCount = await Category.countDocuments();
+    const apiFeatures = new ApiFeatures(Category.find(),req.query).paginate(documentCount).sort().limitFields().search("category").filter();
 
-  const categories = await Category.find({}, { __v: 0 }).skip(skip).limit(limit);
-  res.status(200).json({
-    status: "success",
-    data: {
-      categories,
-    },
-  });
+    // 2) Execute the query
+    const categories = await apiFeatures.mongooseQuery;
+    res.status(200).json({
+      status: "success",
+      data: {
+        categories,
+      },
+      pagination: apiFeatures.paginationResult,
+    });
 });
 
 /**
