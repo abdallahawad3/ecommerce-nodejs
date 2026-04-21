@@ -5,6 +5,7 @@ import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import Product from "../models/Products.js";
 import { BadRequestError, NotFoundError } from "../errors/index.js";
 import transformQuery from "../utils/transformQuery.js";
+import type { SortOrder } from "mongoose";
 
 /**
  * @desc Get all products
@@ -25,12 +26,30 @@ export const getAllProducts = asyncWrapper(
 
     const parsedQuery = transformQuery(queryObj);
 
-    const mongooseQuery = Product.find(parsedQuery, { __v: 0 })
+    let mongooseQuery = Product.find(parsedQuery)
       .skip(skip)
       .limit(limit)
       .populate("category", "name");
 
-    // 4) Executing the query
+    // 3) Sorting
+    if (req.query.sort as string) {
+      const sortFields = (req.query.sort as string).split(",").join(" ");
+      // Sort take the format of "field" for ascending and "-field" for descending and multiple fields can be sorted by separating them with a space
+      mongooseQuery = mongooseQuery.sort(sortFields);
+    } else {
+      mongooseQuery = mongooseQuery.sort("-createdAt");
+    }
+    // 4) Field Limiting
+    if (req.query.fields as string) {
+      const fields = (req.query.fields as string).split(",").join(" ");
+      console.log(fields);
+
+      mongooseQuery = mongooseQuery.select(fields);
+    } else {
+      mongooseQuery = mongooseQuery.select("-__v");
+    }
+
+    // 5) Executing the query
     const products = await mongooseQuery;
 
     // TODO: Handle and update pagination data
