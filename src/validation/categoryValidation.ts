@@ -12,4 +12,5 @@ export const ADD_UPDATE_CATEGORY_VALIDATION = [
 
 export const CHECK_ID_VALIDATION = [
   param("id").isMongoId().withMessage("Invalid category ID format"),
+  validation
 ];

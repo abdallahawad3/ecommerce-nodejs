@@ -9,6 +9,7 @@ import {
   getAllCategories,
   getSpecificCategory,
   updateCategory,
+  uploadCategoryImage,
 } from "../controllers/category.controller.js";
 import subCategoryRoute from "./subCategory.route.js";
 import validation from "../middlewares/validation.js";
@@ -20,10 +21,11 @@ router.use("/:id/subCategories", subCategoryRoute);
 router
   .route("/")
   .get(getAllCategories)
-  .post(ADD_UPDATE_CATEGORY_VALIDATION, validation, createCategory);
+  .post(uploadCategoryImage,ADD_UPDATE_CATEGORY_VALIDATION, createCategory);
+  
 router
   .route("/:id")
-  .get(CHECK_ID_VALIDATION, validation, getSpecificCategory)
+  .get(CHECK_ID_VALIDATION, getSpecificCategory)
   .put(CHECK_ID_VALIDATION, ADD_UPDATE_CATEGORY_VALIDATION, updateCategory)
-  .delete(CHECK_ID_VALIDATION, validation, deleteCategory);
+  .delete(CHECK_ID_VALIDATION, deleteCategory);
 export default router;
