@@ -1,61 +1,21 @@
 import type { NextFunction, Request, Response } from "express";
-import slugify from "slugify";
 
-import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import Brand from "../models/brand.model.js";
-import { InternalServerError, NotFoundError } from "../errors/index.js";
-import ApiFeatures from "../utils/apiFeatures.js";
-import { createOne, deleteOne, updateOne } from "./handlersFactory.js";
+import { createOne, deleteOne, getAll, getOne, updateOne } from "./handlersFactory.js";
 
 /**
  * @desc Get all brands
  * @route GET /api/v1/brands
  * @access Public
  */
-export const getAllBrands = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction) => {
- 
-      // 1) Build the query
-        const documentCount = await Brand.countDocuments();
-        const apiFeatures = new ApiFeatures(Brand.find(),req.query).paginate(documentCount).sort().limitFields().search("brand").filter();
-    
-        // 2) Execute the query
-        const brands = await apiFeatures.mongooseQuery;
-        res.status(200).json({
-          status: "success",
-          data: {
-            brands,
-          },
-          pagination: apiFeatures.paginationResult,
-        });
-  },
-);
-
+export const getAllBrands =  getAll(Brand);
 
 /**
  * @desc Get brand by id
  * @route GET /api/v1/brands/:id
  * @access Public
  */
-export const getBrandByID = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-
-    const brand = await Brand.findById(id, { __v: 0 });
-    if (!brand) {
-      throw new NotFoundError("Brand not found", "NOT_FOUND_ERROR");
-    }
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        brand,
-      },
-    });
-  },
-
-);
-
+export const getBrandByID = getOne(Brand);
 
 /**
  * @desc Create a new brand

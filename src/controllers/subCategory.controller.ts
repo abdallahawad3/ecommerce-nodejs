@@ -1,11 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
-import slugify from "slugify";
-import { asyncWrapper } from "../utils/AsyncWrapper.js";
+
 import SubCategory from "../models/subCategory.model.js";
-import { InternalServerError, NotFoundError } from "../errors/index.js";
-import categoryModel from "../models/category.model.js";
-import ApiFeatures from "../utils/apiFeatures.js";
-import { createOne, deleteOne, updateOne } from "./handlersFactory.js";
+import { createOne, deleteOne, getAll, getOne, updateOne } from "./handlersFactory.js";
 
 /**
  * @desc Set category id to body if category id is not in body but in params (from categoryRoute) then add it to body
@@ -38,43 +34,16 @@ export const createFilterObject = (req: Request, res: Response, next: NextFuncti
  * @route GET /api/v1/subCategories
  * @access Public
  */
-export const getAllSubCategories = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction) => {
-   // 1) Build the query
-    const documentCount = await SubCategory.countDocuments();
-    const apiFeatures = new ApiFeatures(SubCategory.find(),req.query).paginate(documentCount).sort().limitFields().search("subCategory").filter();
-
-    // 2) Execute the query
-    const subCategories = await apiFeatures.mongooseQuery;
-    res.status(200).json({
-      status: "success",
-      data: {
-        subCategories,
-      },
-      pagination: apiFeatures.paginationResult,
-    });
-  },
-);
+export const getAllSubCategories = getAll(SubCategory);
 
 /**
  * @desc Get subCategory by id
  * @route GET /api/v1/subCategories/:id
  * @access Public
  */
-export const getSubCategory = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const subCategory = await SubCategory.findById(id, { __v: 0 });
-    if (!subCategory) throw new NotFoundError("SubCategory not found", "NOT_FOUND_ERROR");
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        subCategory,
-      },
-    });
-  },
-);
+export const getSubCategory = getOne(SubCategory,{path:"category",
+select:"name _id"
+});
 
 /**
  * @desc Create new subCategory

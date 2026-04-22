@@ -73,6 +73,15 @@ const schema = new Schema({
   },
 });
 
+schema.pre(/^find/, function (this: any, next: Function) {
+  this.populate({
+    path: "category",
+    select: "name -_id",
+  });
+
+  next();
+});
+
 const Product = model("Product", schema);
 
 export default Product;

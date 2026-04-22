@@ -74,7 +74,7 @@ class ApiFeatures<T> {
     return this;
   }
 
-  paginate(countPages:number){
+  paginate(totalItemCount:number){
     const page = parseInt(this.query.page as string) || 1;
     const limit = parseInt(this.query.limit as string) || 5;
     const skip = (page - 1) * limit;
@@ -84,11 +84,11 @@ class ApiFeatures<T> {
 
     pagination["currentPage"] = page;
     pagination["limit"] = limit;
-    pagination["totalPages"] = Math.ceil(+countPages / limit);
+    pagination["totalPages"] = Math.ceil(+totalItemCount / limit);
 
     // next page
-    console.log("countPages =>",countPages)
-    if (endIdx < countPages) {
+    console.log("countPages =>",totalItemCount)
+    if (endIdx < totalItemCount) {
       pagination["next"] = page + 1;
     }
     
@@ -96,7 +96,7 @@ class ApiFeatures<T> {
     if (skip > 0) {
       pagination["prev"] = page - 1;
     }
-
+    pagination["totalItems"] = totalItemCount;
     this.paginationResult = pagination;
     this.mongooseQuery = this.mongooseQuery.skip(skip).limit(limit);
     return this;
