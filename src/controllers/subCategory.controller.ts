@@ -5,7 +5,7 @@ import SubCategory from "../models/subCategory.model.js";
 import { InternalServerError, NotFoundError } from "../errors/index.js";
 import categoryModel from "../models/category.model.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne, updateOne } from "./handlersFactory.js";
+import { createOne, deleteOne, updateOne } from "./handlersFactory.js";
 
 /**
  * @desc Set category id to body if category id is not in body but in params (from categoryRoute) then add it to body
@@ -56,40 +56,6 @@ export const getAllSubCategories = asyncWrapper(
   },
 );
 
-
-/**
- * @desc Create new subCategory
- * @route POST /api/v1/subCategories
- * @access Private
- */
-export const createSubCategory = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.body.category) req.body.category = req.params.id; // if category id is not in body but in params (from categoryRoute) then add it to body
-
-    const { name, category } = req.body;
-
-    const existCategory = await categoryModel.findById(category);
-    if (!existCategory) {
-      throw new NotFoundError("Category not found", "NOT_FOUND_ERROR");
-    }
-
-    const subCategory = await SubCategory.create({
-      name,
-      slug: slugify(name, { lower: true }),
-      category: existCategory._id,
-    });
-    if (!subCategory)
-      throw new InternalServerError("Failed to create subCategory", "INTERNAL_SERVER_ERROR");
-
-    res.status(201).json({
-      status: "success",
-      data: {
-        subCategory,
-      },
-    });
-  },
-);
-
 /**
  * @desc Get subCategory by id
  * @route GET /api/v1/subCategories/:id
@@ -109,6 +75,14 @@ export const getSubCategory = asyncWrapper(
     });
   },
 );
+
+/**
+ * @desc Create new subCategory
+ * @route POST /api/v1/subCategories
+ * @access Private
+ */
+export const createSubCategory = createOne(SubCategory);
+
 
 /**
  * @desc Update subCategory by id

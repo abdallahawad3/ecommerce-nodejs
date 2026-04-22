@@ -1,11 +1,10 @@
 import type { Response, Request, NextFunction } from "express";
-import slugify from "slugify";
 
 import Category from "../models/category.model.js";
 import { asyncWrapper } from "../utils/AsyncWrapper.js";
-import { NotFoundError, ValidationError } from "../errors/index.js";
+import { NotFoundError } from "../errors/index.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne, updateOne } from "./handlersFactory.js";
+import { createOne, deleteOne, updateOne } from "./handlersFactory.js";
 
 /** @desc    Get all categories
  *@route   GET /api/categories
@@ -13,7 +12,6 @@ import { deleteOne, updateOne } from "./handlersFactory.js";
  * @returns {Object} 200 - An array of category objects
  * @returns {Object} 500 - Internal Server Error
  */
-
 export const getAllCategories = asyncWrapper(async (req: Request, res: Response) => {
    // 1) Build the query
     const documentCount = await Category.countDocuments();
@@ -62,27 +60,7 @@ export const getSpecificCategory = asyncWrapper(async (req: Request, res: Respon
  * @returns {Object} 400 - Bad Request
  * @returns {Object} 500 - Internal Server Error
  */
-export const createCategory = asyncWrapper(async (req: Request, res: Response) => {
-  const { name } = req.body;
-
-  if (!name) {
-    throw new ValidationError("Category name is required", "VALIDATION_ERROR");
-  }
-
-  const category = await Category.create({
-    name,
-    slug: slugify(name, { lower: true }),
-  });
-
-  const { __v, ...categoryData } = category.toObject();
-
-  res.status(201).json({
-    status: "success",
-    data: {
-      category: categoryData,
-    },
-  });
-});
+export const createCategory = createOne(Category);
 
 /** @desc    Update an existing category
  * @route   PUT /api/categories/:id

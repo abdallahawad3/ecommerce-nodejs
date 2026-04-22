@@ -5,7 +5,7 @@ import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import Product from "../models/product.model.js";
 import { BadRequestError, NotFoundError } from "../errors/index.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne, updateOne } from "./handlersFactory.js";
+import { createOne, deleteOne, updateOne } from "./handlersFactory.js";
 
 /**
  * @desc Get all products
@@ -63,20 +63,7 @@ export const getProductById = asyncWrapper(
  * @route POST /api/products
  * @access Private
  */
-export const createProduct = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction) => {
-    req.body.slug = slugify(req.body.title, { lower: true });
-
-    const product = await Product.create(req.body);
-
-    res.status(201).json({
-      status: "success",
-      data: {
-        product,
-      },
-    });
-  },
-);
+export const createProduct = createOne(Product);
 
 /**
  * @desc Update a product by ID

@@ -13,6 +13,12 @@ export const ADD_SUBCATEGORY_VALIDATION = [
     .trim()
     .isLength({ min: 3, max: 32 })
     .withMessage("Name must be between 3 and 32 characters"),
+    body("name").custom((value, { req }) => {
+      if (value) {
+        req.body.slug = slugify(value, { lower: true });
+      }
+      return true;
+    }),
   body("category")
     .notEmpty()
     .withMessage("Category ID is required")

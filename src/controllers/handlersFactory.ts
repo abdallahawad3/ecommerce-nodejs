@@ -43,4 +43,15 @@ export const updateOne = (Model: any) => asyncWrapper(
     });
   },
 );
-  
+
+export const createOne = (Model:any)=>{
+  return asyncWrapper(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const document = await Model.create(req.body);
+      res.status(201).json({
+        status: "success",
+        data: document,
+      });
+    },
+  );
+}

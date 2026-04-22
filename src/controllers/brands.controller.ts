@@ -5,7 +5,7 @@ import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import Brand from "../models/brand.model.js";
 import { InternalServerError, NotFoundError } from "../errors/index.js";
 import ApiFeatures from "../utils/apiFeatures.js";
-import { deleteOne, updateOne } from "./handlersFactory.js";
+import { createOne, deleteOne, updateOne } from "./handlersFactory.js";
 
 /**
  * @desc Get all brands
@@ -31,27 +31,6 @@ export const getAllBrands = asyncWrapper(
   },
 );
 
-/**
- * @desc Create a new brand
- * @route POST /api/v1/brands
- * @access Public
- */
-export const createBrand = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
-  const { name } = req.body;
-
-  const brand = await Brand.create({ name, slug: slugify(name, { lower: true }) });
-
-  if (!brand) {
-    throw new InternalServerError("Failed to create brand", "INTERNAL_SERVER_ERROR");
-  }
-
-  res.status(201).json({
-    status: "success",
-    data: {
-      brand,
-    },
-  });
-});
 
 /**
  * @desc Get brand by id
@@ -74,7 +53,16 @@ export const getBrandByID = asyncWrapper(
       },
     });
   },
+
 );
+
+
+/**
+ * @desc Create a new brand
+ * @route POST /api/v1/brands
+ * @access Public
+ */
+export const createBrand = createOne(Brand);
 
 /**
  * @desc Update brand by id
