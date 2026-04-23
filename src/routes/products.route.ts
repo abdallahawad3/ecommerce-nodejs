@@ -19,7 +19,7 @@ router
 router
   .route("/:id")
   .get(CHECK_PRODUCT_ID, getProductById)
-  .put(CHECK_PRODUCT_ID, updateProduct)
+  .put(uploadProductImages, resizeProductImages, CHECK_PRODUCT_ID, updateProduct)
   .delete(CHECK_PRODUCT_ID, deleteProduct);
 
 export default router;
