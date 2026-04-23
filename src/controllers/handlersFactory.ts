@@ -19,12 +19,10 @@ export const getAll = (Model: any, modeName: string = "") =>
       .filter();
 
     // 2) Execute the query
-    const products = await apiFeatures.mongooseQuery;
+    const documents = await apiFeatures.mongooseQuery;
     res.status(200).json({
       status: "success",
-      data: {
-        products,
-      },
+      data: documents,
       pagination: apiFeatures.paginationResult,
     });
   });
