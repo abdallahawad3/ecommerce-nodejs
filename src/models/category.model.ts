@@ -23,6 +23,21 @@ const categoryScheme = new Schema(
   },
 );
 
+function setImageUrl(doc: any) {
+  if (doc.image) {
+    const URL = `${process.env.BASE_URL}/categories/${doc.image}`;
+    doc.image = URL;
+  }
+}
+
+categoryScheme.post("init", function (doc) {
+  setImageUrl(doc);
+});
+
+categoryScheme.post("save", function (doc) {
+  setImageUrl(doc);
+});
+
 const categoryModel = model("Category", categoryScheme);
 
 export default categoryModel;

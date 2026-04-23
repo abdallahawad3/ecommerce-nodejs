@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors());
-
+app.use(express.static("uploads"));
 app.use("/api/categories", categoryRoutes);
 app.use("/api/subCategories", subCategoryRoutes);
 app.use("/api/brands", brandRoutes);

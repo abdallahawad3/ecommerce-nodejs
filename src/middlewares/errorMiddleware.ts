@@ -25,8 +25,9 @@ const errorMiddleware = (error: AppError, req: Request, res: Response, next: Nex
   }
 
   // 🔥 Unknown Errors
-  if (!(error instanceof AppError)) {
-    error = new AppError("Internal Server Error", 500, "APP_ERROR");
+  if (!((error as { message: string }) instanceof AppError)) {
+    console.log(error);
+    error = new AppError(error.message, 500, "APP_ERROR");
   }
   // 🔥 Dev vs Prod
   if (process.env.NODE_ENV === "development") {

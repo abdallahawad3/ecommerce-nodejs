@@ -78,8 +78,24 @@ schema.pre(/^find/, function (this: any, next: Function) {
     path: "category",
     select: "name -_id",
   });
+});
 
-  next();
+function GetAllUrl(doc: any) {
+  if (doc.imageCover) {
+    doc.imageCover = `${process.env.BASE_URL}/products/${doc.imageCover}`;
+  }
+
+  if (doc.images && doc.images.length > 0) {
+    doc.images = doc.images.map((img: string) => `${process.env.BASE_URL}/products/${img}`);
+  }
+}
+
+schema.post("init", function (doc) {
+  GetAllUrl(doc);
+});
+
+schema.post("save", function (doc) {
+  GetAllUrl(doc);
 });
 
 const Product = model("Product", schema);

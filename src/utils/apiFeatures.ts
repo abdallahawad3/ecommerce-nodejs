@@ -31,7 +31,7 @@ class ApiFeatures<T> {
     return this;
   }
 
-  sort(){
+  sort() {
     if (this.query.sort as string) {
       const sortFields = (this.query.sort as string).split(",").join(" ");
       // Sort take the format of "field" for ascending and "-field" for descending and multiple fields can be sorted by separating them with a space
@@ -43,7 +43,7 @@ class ApiFeatures<T> {
     return this;
   }
 
-  limitFields(){
+  limitFields() {
     if (this.query.fields as string) {
       const fields = (this.query.fields as string).split(",").join(" ");
       this.mongooseQuery = this.mongooseQuery.select(fields);
@@ -54,18 +54,16 @@ class ApiFeatures<T> {
     return this;
   }
 
-  search(modelName:"product" | "brand" | "category" | string){    
+  search(modelName: "product" | "brand" | "category" | string) {
     if (this.query.keyword) {
       let query: any = {};
-      if(modelName === "product"){
+      if (modelName === "product") {
         query.$or = [
           { title: { $regex: this.query.keyword, $options: "i" } },
           { description: { $regex: this.query.keyword, $options: "i" } },
         ];
       } else {
-        query.$or = [
-          { name: { $regex: this.query.keyword, $options: "i" } },
-        ];
+        query.$or = [{ name: { $regex: this.query.keyword, $options: "i" } }];
       }
 
       this.mongooseQuery = this.mongooseQuery.find(query);
@@ -74,24 +72,22 @@ class ApiFeatures<T> {
     return this;
   }
 
-  paginate(totalItemCount:number){
+  paginate(totalItemCount: number) {
     const page = parseInt(this.query.page as string) || 1;
     const limit = parseInt(this.query.limit as string) || 5;
     const skip = (page - 1) * limit;
     const endIdx = page * limit;
 
-    const pagination: any = {}
+    const pagination: any = {};
 
     pagination["currentPage"] = page;
     pagination["limit"] = limit;
     pagination["totalPages"] = Math.ceil(+totalItemCount / limit);
 
-    // next page
-    console.log("countPages =>",totalItemCount)
     if (endIdx < totalItemCount) {
       pagination["next"] = page + 1;
     }
-    
+
     // previous page
     if (skip > 0) {
       pagination["prev"] = page - 1;
