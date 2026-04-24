@@ -29,7 +29,7 @@ const schema = new Schema(
       required: [true, "The password is required"],
       minLength: [6, "The password too short"],
     },
-
+    changePasswordDate: Date,
     role: {
       type: String,
       enum: ["user", "admin"],

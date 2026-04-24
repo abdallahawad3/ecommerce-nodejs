@@ -14,6 +14,7 @@ import {
 } from "../controllers/category.controller.js";
 import subCategoryRoute from "./subCategory.route.js";
 import validation from "../middlewares/validation.js";
+import { auth } from "../controllers/auth.controller.js";
 
 const router = Router();
 
@@ -22,7 +23,13 @@ router.use("/:id/subCategories", subCategoryRoute);
 router
   .route("/")
   .get(getAllCategories)
-  .post(uploadCategoryImage, resizeCategoryImage, ADD_UPDATE_CATEGORY_VALIDATION, createCategory);
+  .post(
+    auth,
+    uploadCategoryImage,
+    resizeCategoryImage,
+    ADD_UPDATE_CATEGORY_VALIDATION,
+    createCategory,
+  );
 
 router
   .route("/:id")

@@ -106,7 +106,10 @@ export const updateUserPassword = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { password: await bcrypt.hashSync(req.body.newPassword, 12) },
+      {
+        password: await bcrypt.hashSync(req.body.newPassword, 12),
+        changePasswordDate: Date.now(),
+      },
       { new: true },
     );
 

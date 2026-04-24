@@ -24,6 +24,13 @@ const errorMiddleware = (error: AppError, req: Request, res: Response, next: Nex
     error = new CastError("Invalid ID format", "CAST_ERROR");
   }
 
+  if (error.name === "JsonWebTokenError") {
+    error = new AppError("Invalid token. Please log in again!", 401);
+  }
+
+  if (error.name === "TokenExpiredError") {
+    error = new AppError("Your token has expired! Please log in again.", 401);
+  }
   // 🔥 Unknown Errors
   if (!((error as { message: string }) instanceof AppError)) {
     console.log(error);
