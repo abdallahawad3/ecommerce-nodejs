@@ -21,7 +21,6 @@ const schema = new Schema(
     },
     phone: {
       type: String,
-      unique: true,
     },
     profileImage: String,
 

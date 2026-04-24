@@ -10,6 +10,7 @@ import subCategoryRoutes from "./routes/subCategory.route.js";
 import brandRoutes from "./routes/brands.route.js";
 import productRoutes from "./routes/products.route.js";
 import userRoutes from "./routes/user.route.js";
+import authRoutes from "./routes/auth.route.js";
 
 dotenv.config();
 const app = express();
@@ -24,6 +25,7 @@ app.use("/api/subCategories", subCategoryRoutes);
 app.use("/api/brands", brandRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 
 app.use(errorMiddleware);
 
