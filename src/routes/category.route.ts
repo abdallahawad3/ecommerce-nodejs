@@ -14,7 +14,7 @@ import {
 } from "../controllers/category.controller.js";
 import subCategoryRoute from "./subCategory.route.js";
 import validation from "../middlewares/validation.js";
-import { auth } from "../controllers/auth.controller.js";
+import { allowedTo, auth } from "../controllers/auth.controller.js";
 
 const router = Router();
 
@@ -25,6 +25,7 @@ router
   .get(getAllCategories)
   .post(
     auth,
+    allowedTo("admin", "manager"),
     uploadCategoryImage,
     resizeCategoryImage,
     ADD_UPDATE_CATEGORY_VALIDATION,
@@ -35,11 +36,13 @@ router
   .route("/:id")
   .get(CHECK_ID_VALIDATION, getSpecificCategory)
   .put(
+    auth,
+    allowedTo("admin", "manager"),
     uploadCategoryImage,
     resizeCategoryImage,
     CHECK_ID_VALIDATION,
     ADD_UPDATE_CATEGORY_VALIDATION,
     updateCategory,
   )
-  .delete(CHECK_ID_VALIDATION, deleteCategory);
+  .delete(auth, allowedTo("admin"), CHECK_ID_VALIDATION, deleteCategory);
 export default router;

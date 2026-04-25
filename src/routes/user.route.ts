@@ -15,18 +15,34 @@ import {
   CREATE_USER_VALIDATION,
   UPDATE_USER_VALIDATION,
 } from "../validation/userValidation.js";
+import { allowedTo, auth } from "../controllers/auth.controller.js";
 
 const router = Router();
 
 router
   .route("/")
-  .get(getAllUsers)
-  .post(uploadUserImage, resizeUserImage, CREATE_USER_VALIDATION, createUser);
+  .get(auth, allowedTo("admin"), getAllUsers)
+  .post(
+    auth,
+    allowedTo("admin"),
+    uploadUserImage,
+    resizeUserImage,
+    CREATE_USER_VALIDATION,
+    createUser,
+  );
 router
   .route("/:id")
-  .get(CHECK_USER_ID, getOneUser)
-  .put(uploadUserImage, resizeUserImage, CHECK_USER_ID, UPDATE_USER_VALIDATION, updateUser)
-  .delete(CHECK_USER_ID, deleteUser);
+  .get(auth, allowedTo("admin"), CHECK_USER_ID, getOneUser)
+  .put(
+    auth,
+    allowedTo("admin"),
+    uploadUserImage,
+    resizeUserImage,
+    CHECK_USER_ID,
+    UPDATE_USER_VALIDATION,
+    updateUser,
+  )
+  .delete(auth, allowedTo("admin"), CHECK_USER_ID, deleteUser);
 
 router
   .route("/:id/change-password")

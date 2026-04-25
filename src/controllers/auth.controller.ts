@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import type { Response, Request, NextFunction } from "express";
 import { asyncWrapper } from "../utils/AsyncWrapper.js";
 import User from "../models/users.model.js";
-import { NotFoundError, UnauthorizedError } from "../errors/index.js";
+import { ForbiddenError, NotFoundError, UnauthorizedError } from "../errors/index.js";
 import { compare } from "bcryptjs";
 import createToken from "../utils/createToken.js";
 
@@ -52,8 +52,8 @@ export const login = asyncWrapper(async (req: Request, res: Response, next: Next
 });
 
 /**
- * @desc Authenticate a user
- * @route POST /api/authenticate
+ * @desc  Protect routes - only for logged in users
+ * @route  All routes after this middleware
  * @access Private
  */
 export const auth = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
@@ -101,3 +101,27 @@ export const auth = asyncWrapper(async (req: Request, res: Response, next: NextF
 
   next();
 });
+
+/**
+ * @desc  Restrict access to certain roles
+ * @route  All routes after this middleware
+ * @access Private (only for specific roles)
+ */
+export const allowedTo = (...requiredRole: string[]) =>
+  asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      throw new ForbiddenError(
+        "You are not logged in! Please log in to get access.",
+        "FORBIDDEN_ERROR",
+      );
+    }
+
+    if (!requiredRole.includes(req.user.role)) {
+      throw new ForbiddenError(
+        "You do not have permission to perform this action.",
+        "FORBIDDEN_ERROR",
+      );
+    }
+
+    next();
+  });
