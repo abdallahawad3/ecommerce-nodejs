@@ -30,6 +30,9 @@ const schema = new Schema(
       minLength: [6, "The password too short"],
     },
     changePasswordDate: Date,
+    passwordRestCode: String,
+    passwordResetExpires: Date,
+    passwordVerified: Boolean,
     role: {
       type: String,
       enum: ["user", "admin", "manager"],

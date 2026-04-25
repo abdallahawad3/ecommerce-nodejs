@@ -49,3 +49,45 @@ export const LOGIN_VALIDATION = [
   body("password").notEmpty().withMessage("Password is required"),
   validation,
 ];
+
+export const FORGOT_PASSWORD = [
+  body("email")
+    .notEmpty()
+    .withMessage("The email is required")
+    .isEmail()
+    .withMessage("Invalid email"),
+  validation,
+];
+
+export const VERIFY_CODE = [
+  body("email")
+    .notEmpty()
+    .withMessage("The email is required")
+    .isEmail()
+    .withMessage("Invalid email address"),
+  body("otp").notEmpty().trim().withMessage("The otp is required"),
+  validation,
+];
+
+export const RESET_PASSWORD = [
+  body("email")
+    .notEmpty()
+    .withMessage("The email is required")
+    .isEmail()
+    .withMessage("Invalid email address"),
+  body("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long"),
+  body("confirmPassword")
+    .notEmpty()
+    .withMessage("Confirm Password is required")
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error("Passwords do not match");
+      }
+      return true;
+    }),
+  validation,
+];
